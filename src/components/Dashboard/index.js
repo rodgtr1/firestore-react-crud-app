@@ -89,6 +89,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
           selectedEmployee={selectedEmployee}
           setEmployees={setEmployees}
           setIsEditing={setIsEditing}
+          getEmployees={getEmployees}
         />
       )}
     </div>

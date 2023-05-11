@@ -1,52 +1,81 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 
-const Login = ({ setIsAuthenticated }) => {
-  const adminEmail = 'admin@example.com';
-  const adminPassword = 'qwerty';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
-  const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('qwerty');
+const Login = ({ setIsAuthenticated }) => {
+
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
 
   const handleLogin = e => {
     e.preventDefault();
 
-    if (email === adminEmail && password === adminPassword) {
-      Swal.fire({
-        timer: 1500,
-        showConfirmButton: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-        willClose: () => {
-          localStorage.setItem('is_authenticated', true);
-          setIsAuthenticated(true);
+    const auth = getAuth();
 
-          Swal.fire({
-            icon: 'success',
-            title: 'Successfully logged in!',
-            showConfirmButton: false,
-            timer: 1500,
-          });
-        },
-      });
-    } else {
-      Swal.fire({
-        timer: 1500,
-        showConfirmButton: false,
-        willOpen: () => {
-          Swal.showLoading();
-        },
-        willClose: () => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Incorrect email or password.',
-            showConfirmButton: true,
-          });
-        },
-      });
+    if (document.activeElement.name === 'Login') {
+      try {
+        signInWithEmailAndPassword(auth, email, password)
+        Swal.fire({
+          timer: 1500,
+          showConfirmButton: false,
+          willOpen: () => {
+            Swal.showLoading();
+          },
+          willClose: () => {
+            setIsAuthenticated(true);
+  
+            Swal.fire({
+              icon: 'success',
+              title: 'Successfully logged in!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          },
+        });
+      } catch (error) {
+        Swal.fire({
+          timer: 1500,
+          showConfirmButton: false,
+          willOpen: () => {
+            Swal.showLoading();
+          },
+          willClose: () => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Incorrect email or password.',
+              showConfirmButton: true,
+            });
+          },
+        });
+      }
+    } else if (document.activeElement.name === 'Register') {
+      try {
+        createUserWithEmailAndPassword(auth, email, password)
+        Swal.fire({
+          timer: 1500,
+          showConfirmButton: false,
+          willOpen: () => {
+            Swal.showLoading();
+          },
+          willClose: () => {
+            setIsAuthenticated(true);
+  
+            Swal.fire({
+              icon: 'success',
+              title: 'Successfully registered and logged in!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          },
+        });
+      } catch (error) {
+        console.log(error)
+      }
     }
+
+    
   };
 
   return (
@@ -71,7 +100,8 @@ const Login = ({ setIsAuthenticated }) => {
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
-        <input style={{ marginTop: '12px' }} type="submit" value="Login" />
+        <input style={{ marginTop: '12px' }} type="submit" value="Login" name="Login" />
+        <input style={{ marginTop: '12px', marginLeft: '12px', backgroundColor: 'black' }} type="submit" value="Register" name="Register" />
       </form>
     </div>
   );
