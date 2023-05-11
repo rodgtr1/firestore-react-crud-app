@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 
-const Add = ({ employees, setEmployees, setIsAdding }) => {
+import { collection, addDoc } from "firebase/firestore"; 
+import { db } from '../../config/firestore'
+
+
+const Add = ({ employees, setEmployees, setIsAdding, getEmployees }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [salary, setSalary] = useState('');
   const [date, setDate] = useState('');
 
-  const handleAdd = e => {
+  const handleAdd = async (e) => {
     e.preventDefault();
 
     if (!firstName || !lastName || !email || !salary || !date) {
@@ -30,10 +34,17 @@ const Add = ({ employees, setEmployees, setIsAdding }) => {
 
     employees.push(newEmployee);
 
-    // TODO: Add doc to DB
+    try {
+      await addDoc(collection(db, "employees"), {
+        ...newEmployee
+      });
+    } catch (error) {
+      console.log(error)
+    }
 
     setEmployees(employees);
     setIsAdding(false);
+    getEmployees()
 
     Swal.fire({
       icon: 'success',
