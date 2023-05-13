@@ -8,14 +8,14 @@ const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  const handleLogin = e => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     const auth = getAuth();
 
     if (document.activeElement.name === 'Login') {
       try {
-        signInWithEmailAndPassword(auth, email, password)
+        await signInWithEmailAndPassword(auth, email, password)
         Swal.fire({
           timer: 1500,
           showConfirmButton: false,
@@ -52,7 +52,7 @@ const Login = ({ setIsAuthenticated }) => {
       }
     } else if (document.activeElement.name === 'Register') {
       try {
-        createUserWithEmailAndPassword(auth, email, password)
+        await createUserWithEmailAndPassword(auth, email, password)
         Swal.fire({
           timer: 1500,
           showConfirmButton: false,
