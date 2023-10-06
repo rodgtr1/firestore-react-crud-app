@@ -5,17 +5,26 @@ import Header from './Header';
 import Table from './Table';
 import Add from './Add';
 import Edit from './Edit';
+import {db} from "../../config/firestore";
 
-import { employeesData } from '../../data';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 
 const Dashboard = ({ setIsAuthenticated }) => {
-  const [employees, setEmployees] = useState(employeesData);
+  const [employees, setEmployees] = useState();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  
+  const getEmployees = async () => {
+    const querySnapshot = await getDocs(collection(db, "employees"));
+    const employees = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}))
+    setEmployees(employees)
+
+  }
 
   useEffect(() => {
-    // TODO: create getEmployees function and call it here
+    getEmployees()
+
   }, []);
 
   const handleEdit = id => {
@@ -37,7 +46,8 @@ const Dashboard = ({ setIsAuthenticated }) => {
       if (result.value) {
         const [employee] = employees.filter(employee => employee.id === id);
 
-        // TODO delete document
+         deleteDoc(doc(db, "employees", id));
+
 
         Swal.fire({
           icon: 'success',
@@ -73,6 +83,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
           employees={employees}
           setEmployees={setEmployees}
           setIsAdding={setIsAdding}
+          getEmployees={getEmployees}
         />
       )}
       {isEditing && (
