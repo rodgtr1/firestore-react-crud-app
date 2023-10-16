@@ -1,6 +1,9 @@
 {
   "name": "crud-app",
   "version": "3.3.0",
+  "engines": {
+    "node": "16.10.0",
+  },
   "private": true,
   "homepage": "https://safdarjamal.github.io/crud-app/",
   "author": {
